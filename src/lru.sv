@@ -4,7 +4,9 @@ module lru (
     input  logic        branch1_used,     
     input  logic        branch2_used,     
     input  logic [2:0]  update_index,     
-    input  logic        new_entry,        
+    input  logic        new_entry,   
+    input  logic        insert_branch1, 
+    input  logic        insert_branch2,      
     output logic        lru_read_bit,     
     output logic        lru_write_bit     
 );
@@ -28,5 +30,21 @@ module lru (
             lru_reg[read_index] <= 1'b1;
     end
 
+
+    // ----------- EX Stage -------------
+    
+    // Determine what to write into LRU when a new entry is inserted/replaced
+    assign lru_write_bit = lru_reg[update_index];
+
+    always_ff @(posedge clk) begin
+        if (new_entry) begin
+            // If a new entry inserted in branch1 → mark branch1 as recently used (0)
+            // If in branch2 → mark branch2 as recently used (1)
+            if (insert_branch1)
+                lru_reg[update_index] <= 1'b0;
+            else if (insert_branch2)
+                lru_reg[update_index] <= 1'b1;
+        end
+    end
 
 endmodule

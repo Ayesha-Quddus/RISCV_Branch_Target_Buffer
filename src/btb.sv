@@ -72,6 +72,11 @@ module btb(
 
     logic new_entry = ~(update_branch1 || update_branch2); // if no hit, this is a new entry
     logic lru_read, lru_write;
+    logic insert_branch1, insert_branch2;
+    
+    assign insert_branch1 = new_entry ? lru_write : 1'b0;  // if LRU bit = 1 → replace way1
+    assign insert_branch2 = new_entry ? lru_write : 1'b1;  // if LRU bit = 0 → replace way2
+
    
     // LRU tracking
     lru u_lru(
@@ -81,6 +86,8 @@ module btb(
         .branch2_used(check_branch2),
         .update_index(update_index),
         .new_entry(new_entry),
+        .insert_branch1(insert_branch1),
+        .insert_branch2(insert_branch2),
         .lru_read_bit(lru_read),
         .lru_write_bit(lru_write)
     );
