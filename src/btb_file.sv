@@ -8,7 +8,13 @@ module btb_file(
 );
     logic [127:0] btb_mem [7:0]; // 8 sets, 128 bits each
 
-    // Read 
+    // Read (combinational)
     assign read_set = (write_enable && read_index == write_index) ? write_set : btb_mem[read_index];
 
+    // Write (sequential)
+    always_ff @(posedge clk) begin
+        if(write_enable)
+            btb_mem[write_index] <= write_set;
+    end
+    
 endmodule
