@@ -1,7 +1,8 @@
 module btb_read_logic(
     input  logic [127:0] set_data,   
     input  logic [26:0]  pc_tag,     
-    output logic         hit,        
+    output logic         hit1,
+    output logic         hit2,          
     output logic [31:0]  target,     
     output logic [1:0]   fsm_state   
 );
@@ -25,10 +26,9 @@ module btb_read_logic(
     assign fsm2    = set_data[3:2];
 
     // Compare tags to determine hit
-    logic hit1 = valid1 && (pc_tag == tag1);
-    logic hit2 = valid2 && (pc_tag == tag2);
+    assign hit1 = valid1 && (pc_tag == tag1);
+    assign hit2 = valid2 && (pc_tag == tag2);
 
-    assign hit       = hit1 || hit2;
     assign target    = hit1 ? target1 : target2;
     assign fsm_state = hit1 ? fsm1 : (hit2 ? fsm2 : 2'b00);
 
