@@ -12,13 +12,13 @@ module btb(
 
     // ----------- IF Stage -------------
     // PC (32 bits) = Tag (27 bits) + Index (3 bits) + Byte offset (2 bits)
-    logic [2:0] index = PC[4:2];
-    logic [26:0] tag  = PC[31:5];
+    logic [2:0]  index = PC[4:2];
+    logic [26:0] tag   = PC[31:5];
 
     // BTB memory
     logic [127:0] read_set;
     logic [127:0] write_set;
-    logic [2:0] write_index;
+    logic [2:0]   write_index;
 
     btb_file u_btb_file(
         .clk(clk),
@@ -29,6 +29,18 @@ module btb(
         .write_enable(update)
     );
 
-    
+    // Read branch entries and compare tags using btb_read_logic
+    logic [1:0] current_fsm;
 
+    btb_read_logic u_read(
+        .set_data(read_set),  
+        .pc_tag(tag),         
+        .hit(valid),          
+        .target(target),      
+        .fsm_state(current_fsm) 
+    );
+
+    assign predictedTaken = current_fsm[1];
+
+    
 endmodule
