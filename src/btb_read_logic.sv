@@ -4,14 +4,15 @@ module btb_read_logic(
     output logic         hit1,
     output logic         hit2,          
     output logic [31:0]  target,     
-    output logic [1:0]   fsm_state   
+    output logic         valid,
+    output logic         predictedTaken   
 );
 
     // Split set into two branches
-    logic valid1, valid2;
+    logic        valid1, valid2;
     logic [26:0] tag1, tag2;
     logic [31:0] target1, target2;
-    logic [1:0] fsm1, fsm2;
+    logic [1:0]  fsm1, fsm2;
 
     // Branch 1
     assign valid1  = set_data[127];
@@ -31,5 +32,8 @@ module btb_read_logic(
 
     assign target    = hit1 ? target1 : target2;
     assign fsm_state = hit1 ? fsm1 : (hit2 ? fsm2 : 2'b00);
+
+    assign valid          = hit1 || hit2;
+    assign predictedTaken = fsm_state[1];
 
 endmodule

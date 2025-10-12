@@ -4,9 +4,8 @@ module lru (
     input  logic        branch1_used,     
     input  logic        branch2_used,     
     input  logic [2:0]  update_index,     
-    input  logic        new_entry,   
-    input  logic        insert_branch1, 
-    input  logic        insert_branch2,      
+    input  logic        update_branch1,
+    input  logic        update_branch2,     
     output logic        lru_read_bit,     
     output logic        lru_write_bit     
 );
@@ -35,6 +34,14 @@ module lru (
     
     // Determine what to write into LRU when a new entry is inserted/replaced
     assign lru_write_bit = lru_reg[update_index];
+
+    logic new_entry;
+    logic insert_branch1, insert_branch2;
+
+    assign new_entry = ~(update_branch1 || update_branch2); // if no hit, this is a new entry
+
+    assign insert_branch1 = new_entry ? lru_write_bit : 1'b0;
+    assign insert_branch2 = new_entry ? lru_write_bit : 1'b1;
 
     always_ff @(posedge clk) begin
         if (new_entry) begin
