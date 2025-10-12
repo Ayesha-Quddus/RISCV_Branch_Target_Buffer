@@ -1,5 +1,6 @@
 module btb(
     input  logic        clk,
+    input  logic        rst,
     input  logic [31:0] PC,
     input  logic        update,
     input  logic [31:0] updatePC,
@@ -10,21 +11,32 @@ module btb(
     output logic        predictedTaken
 );
 
-    // ----------- IF Stage -------------
+    // ----------- Internal Signals -------------
 
     // PC (32 bits) = Tag (27 bits) + Index (3 bits) + Byte offset (2 bits)
-    logic [2:0]  index = PC[4:2];
-    logic [26:0] tag   = PC[31:5];
+    logic [2:0]  index;
+    logic [26:0] tag;   
 
-    // BTB memory
     logic [127:0] read_set;
-
     logic [127:0] update_set;
-    logic [2:0]   update_index = updatePC[4:2];
-    logic [26:0]  update_tag   = updatePC[31:5];
-
+    logic [2:0]   update_index;
+    logic [26:0]  update_tag;
     logic [127:0] write_set;
-    logic [2:0]   write_index = updatePC[4:2];
+    logic [2:0]   write_index;
+
+    logic check_branch1, check_branch2;
+    logic update_branch1, update_branch2;
+    logic lru_read, lru_write;
+
+    
+    // ----------- IF Stage -------------
+    
+    // BTB memory
+    assign index        = PC[4:2];
+    assign tag          = PC[31:5];
+    assign update_index = updatePC[4:2];
+    assign update_tag   = updatePC[31:5];
+    assign write_index  = updatePC[4:2];
 
     btb_file u_btb_file(
         .clk(clk),
@@ -38,8 +50,6 @@ module btb(
     );
 
     // Use btb_read_logic to read the set
-    logic check_branch1, check_branch2;
-
     btb_read_logic u_read(
         .set_data(read_set),  
         .pc_tag(tag),         
@@ -54,25 +64,20 @@ module btb(
     // ----------- EX Stage ------------
 
     // Use btb_read_logic to read the set for update
-    logic [31:0] update_target;
-    logic        update_branch1, update_branch2;
-
     btb_read_logic u_update_read(
         .set_data(update_set),
         .pc_tag(update_tag),   
         .hit1(update_branch1), 
         .hit2(update_branch2),      
-        .target(update_target),
-        .valid(valid),
-        .predictedTaken(predictedTaken) 
+        .target(),
+        .valid(),
+        .predictedTaken() 
     );
-
-    // --- LRU signals ---
-    logic lru_read, lru_write;
 
     // LRU tracking
     lru u_lru(
         .clk(clk),
+        .rst(rst),
         .read_index(index),
         .branch1_used(check_branch1),
         .branch2_used(check_branch2),

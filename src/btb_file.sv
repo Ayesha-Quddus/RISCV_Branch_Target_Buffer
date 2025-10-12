@@ -11,6 +11,14 @@ module btb_file(
 
     logic [127:0] btb_mem [7:0]; // 8 sets, 128 bits each
 
+    // ----------- Initialization (simulation) -------------
+    // All sets cleared to 0 on simulation start
+    initial begin
+        integer i;
+        for (i = 0; i < 8; i = i + 1)
+            btb_mem[i] = 128'b0;
+    end
+
     // Read (combinational)
     assign read_set = (write_enable && read_index == write_index) ? write_set : btb_mem[read_index];
 
