@@ -7,9 +7,8 @@ module btb_file(
     input  logic [2:0]   update_index,
     output logic [127:0] read_set,
     output logic [127:0] update_set
-
-    
 );
+
     logic [127:0] btb_mem [7:0]; // 8 sets, 128 bits each
 
     // Read (combinational)

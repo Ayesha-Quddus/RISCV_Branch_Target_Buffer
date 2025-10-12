@@ -37,9 +37,8 @@ module btb(
         .update_set(update_set)
     );
 
-    // Read branch entries and compare tags using btb_read_logic
-    logic [1:0] current_fsm;
-    logic       check_branch1, check_branch2; 
+    // Use btb_read_logic to read the set
+    logic check_branch1, check_branch2;
 
     btb_read_logic u_read(
         .set_data(read_set),  
@@ -47,18 +46,15 @@ module btb(
         .hit1(check_branch1),  
         .hit2(check_branch2),          
         .target(target),      
-        .fsm_state(current_fsm) 
+        .valid(valid),
+        .predictedTaken(predictedTaken)  
     );
-
-    assign valid          = check_branch1 || check_branch2;
-    assign predictedTaken = current_fsm[1];
 
 
     // ----------- EX Stage ------------
 
     // Use btb_read_logic to read the set for update
     logic [31:0] update_target;
-    logic [1:0]  update_fsm;
     logic        update_branch1, update_branch2;
 
     btb_read_logic u_update_read(
@@ -67,17 +63,13 @@ module btb(
         .hit1(update_branch1), 
         .hit2(update_branch2),      
         .target(update_target),
-        .fsm_state(update_fsm) 
+        .valid(valid),
+        .predictedTaken(predictedTaken) 
     );
 
-    logic new_entry = ~(update_branch1 || update_branch2); // if no hit, this is a new entry
+    // --- LRU signals ---
     logic lru_read, lru_write;
-    logic insert_branch1, insert_branch2;
-    
-    assign insert_branch1 = new_entry ? lru_write : 1'b0;  // if LRU bit = 1 → replace way1
-    assign insert_branch2 = new_entry ? lru_write : 1'b1;  // if LRU bit = 0 → replace way2
 
-   
     // LRU tracking
     lru u_lru(
         .clk(clk),
@@ -85,12 +77,22 @@ module btb(
         .branch1_used(check_branch1),
         .branch2_used(check_branch2),
         .update_index(update_index),
-        .new_entry(new_entry),
-        .insert_branch1(insert_branch1),
-        .insert_branch2(insert_branch2),
+        .update_branch1(update_branch1),
+        .update_branch2(update_branch2),
         .lru_read_bit(lru_read),
         .lru_write_bit(lru_write)
     );
 
-   
+    // Build write set
+    btb_write_logic u_write_logic (
+        .old_set(update_set),
+        .new_tag(update_tag),
+        .new_target(updateTarget),
+        .mispredicted(mispredicted),
+        .update_branch1(update_branch1),
+        .update_branch2(update_branch2),
+        .lru_write(lru_write),
+        .write_set(write_set)
+    );
+
 endmodule
