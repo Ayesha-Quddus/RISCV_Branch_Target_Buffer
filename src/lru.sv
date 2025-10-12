@@ -1,5 +1,6 @@
 module lru (
     input  logic        clk,
+    input  logic        rst,
     input  logic [2:0]  read_index,       
     input  logic        branch1_used,     
     input  logic        branch2_used,     
@@ -13,6 +14,12 @@ module lru (
     // LRU table — 8 sets, each 1 bit (since 2-way BTB)
     logic [7:0] lru_reg;
 
+    // ----------- Initialization (simulation) -------------
+    // Sets all entries to branch1 recently used by default
+    initial begin
+        lru_reg = 8'b0;
+    end
+
 
     // ----------- IF Stage -------------
 
@@ -22,8 +29,10 @@ module lru (
     // Compute new LRU bit after IF stage (if branch used)
     // 0 → branch1 used recently
     // 1 → branch2 used recently
-    always_ff @(posedge clk) begin
-        if (branch1_used)
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst)
+            lru_reg <= 8'b0;  
+        else if (branch1_used)
             lru_reg[read_index] <= 1'b0;
         else if (branch2_used)
             lru_reg[read_index] <= 1'b1;
@@ -43,8 +52,10 @@ module lru (
     assign insert_branch1 = new_entry ? lru_write_bit : 1'b0;
     assign insert_branch2 = new_entry ? lru_write_bit : 1'b1;
 
-    always_ff @(posedge clk) begin
-        if (new_entry) begin
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst)
+            lru_reg <= 8'b0;  
+        else if (new_entry) begin
             // If a new entry inserted in branch1 → mark branch1 as recently used (0)
             // If in branch2 → mark branch2 as recently used (1)
             if (insert_branch1)
