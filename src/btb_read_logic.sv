@@ -13,6 +13,7 @@ module btb_read_logic(
     logic [26:0] tag1, tag2;
     logic [31:0] target1, target2;
     logic [1:0]  fsm1, fsm2;
+    logic [1:0]  fsm_state;
 
     // Branch 1
     assign valid1  = set_data[127];

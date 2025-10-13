@@ -37,11 +37,11 @@ module btb_write_logic(
 
     assign new_entry = ~(update_branch1 || update_branch2);
 
-    assign insert_branch1 = new_entry ? lru_write : 1'b0;
-    assign insert_branch2 = new_entry ? lru_write : 1'b1;
+    assign insert_branch1 = new_entry && ~lru_write;
+    assign insert_branch2 = new_entry && lru_write;
 
     assign take_branch1 = update_branch1 || insert_branch1;
-    assign take_branch2 = update_branch2 || ~insert_branch2;
+    assign take_branch2 = update_branch2 || insert_branch2;
 
     assign write_valid1 = valid1 | take_branch1;
     assign write_valid2 = valid2 | take_branch2;
