@@ -3,6 +3,7 @@ module btb_write_logic(
     input  logic [26:0]  new_tag,
     input  logic [31:0]  new_target,
     input  logic         mispredicted,
+    input  logic         update,
     input  logic         update_branch1,
     input  logic         update_branch2,
     input  logic         lru_write,
@@ -35,7 +36,7 @@ module btb_write_logic(
     logic        insert_branch1, insert_branch2;
     logic        take_branch1, take_branch2;
 
-    assign new_entry = ~(update_branch1 || update_branch2);
+    assign new_entry = update && ~(update_branch1 || update_branch2);
 
     assign insert_branch1 = new_entry && ~lru_write;
     assign insert_branch2 = new_entry && lru_write;
