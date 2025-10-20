@@ -3,7 +3,8 @@ module lru (
     input  logic        rst,
     input  logic [2:0]  read_index,       
     input  logic        branch1_used,     
-    input  logic        branch2_used,     
+    input  logic        branch2_used, 
+    input  logic        update,     
     input  logic [2:0]  update_index,     
     input  logic        update_branch1,
     input  logic        update_branch2,     
@@ -22,7 +23,7 @@ module lru (
     logic new_entry;
     logic insert_branch1, insert_branch2;
 
-    assign new_entry      = ~(update_branch1 || update_branch2); // new entry if no hit
+    assign new_entry      = update && ~(update_branch1 || update_branch2); // new entry if no hit
     assign insert_branch1 = new_entry && ~lru_write_bit;
     assign insert_branch2 = new_entry && lru_write_bit;
 

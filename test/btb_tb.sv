@@ -118,17 +118,18 @@ module btb_tb;
             PC = PC_0;
             step();
             update = 0;
+            step();
 
             // Basic FSM transition check 
             if (predictedTaken == 0) begin
                 $display("Set %0d FSM starts in NotTaken state", s);
-                mispredicted = 1; update = 1; step(); update = 0;
-                mispredicted = 1; update = 1; step(); update = 0;
+                mispredicted = 1; update = 1; step(); update = 0; step();
+                mispredicted = 1; update = 1; step(); update = 0; step();
                 $display("FSM transition path tested (NotTaken → Taken)");
             end else begin
                 $display("Set %0d FSM starts in Taken state", s);
-                mispredicted = 1; update = 1; step(); update = 0;
-                mispredicted = 1; update = 1; step(); update = 0;
+                mispredicted = 1; update = 1; step(); update = 0; step();
+                mispredicted = 1; update = 1; step(); update = 0; step();
                 $display("FSM transition path tested (Taken → NotTaken)");
             end
             mispredicted = 0;
