@@ -54,16 +54,19 @@ module btb_write_logic(
     assign write_target2 = take_branch2 ? new_target : target2;
 
     // -------- FSM updates --------
-    logic [1:0] next_fsm1, next_fsm2;
+    logic [1:0] next_fsm1, next_fsm2, fsm1_input, fsm2_input;
+
+    assign fsm1_input = insert_branch1 ? 2'b00 : fsm1;
+    assign fsm2_input = insert_branch2 ? 2'b00 : fsm2;
 
     predictor_fsm u_fsm1(
-        .currentState(insert_branch1 ? 2'b00 : fsm1),
+        .currentState(fsm1_input),
         .mispredicted(mispredicted),
         .nextState(next_fsm1)
     );
 
     predictor_fsm u_fsm2(
-        .currentState(insert_branch2 ? 2'b00 : fsm2),
+        .currentState(fsm2_input),
         .mispredicted(mispredicted),
         .nextState(next_fsm2)
     );
