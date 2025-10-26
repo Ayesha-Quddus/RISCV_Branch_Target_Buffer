@@ -1,4 +1,4 @@
-# Branch Target Buffer (BTB) - SystemVerilog Implementation
+# RISC-V Branch Target Buffer (BTB) Implementation
 
 This repository contains the RTL design and verification environment for a **2-way set-associative Branch Target Buffer (BTB)** with an integrated **2-bit saturating branch predictor**, implemented in **SystemVerilog**.  
 The BTB enables branch target and direction prediction in pipelined processors, enhancing control-flow efficiency.
@@ -141,7 +141,6 @@ State Transition Diagram::
 |------------|--------|
 | **Worst Negative Slack (WNS)** | 1.638 ns |
 | **Worst Hold Slack (WHS)** | 0.235 ns | 
-| **Estimated Max Frequency (Fmax)** | ~120 MHz | 
 
 ![Timing Summary](imgs/timing_summary.png)  
 
