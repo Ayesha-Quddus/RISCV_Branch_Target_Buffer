@@ -107,7 +107,7 @@ State Transition Diagram::
 
 ## 🖥️ Simulation Instructions
 
-### 🔹 Using Vivado/ ModelSim
+### 🔹 Using Vivado
 1. Add all `src/` and `tb/` files to your simulation project.  
 2. Set `btb_tb` as the top-level module.  
 3. Run the simulation for at least **400 ns**.  
