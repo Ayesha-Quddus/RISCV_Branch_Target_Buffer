@@ -1,6 +1,6 @@
 # RISC-V Branch Target Buffer (BTB) Implementation
 
-This repository contains the RTL design and verification environment for a **2-way set-associative Branch Target Buffer (BTB)** with an integrated **2-bit saturating branch predictor**, implemented in **SystemVerilog**.  
+This repository contains the RTL design and verification environment for a **2-way set-associative Branch Target Buffer (BTB)** with an integrated **2-bit dynamic branch predictor**, implemented in **SystemVerilog**.  
 The BTB enables branch target and direction prediction in pipelined processors, enhancing control-flow efficiency.
 
 ---
@@ -32,7 +32,7 @@ The BTB enables branch target and direction prediction in pipelined processors, 
 - **2-way set associative BTB** containing 8 sets for branch storage   
 - **Tag comparison** per way with valid bit check  
 - **LRU replacement policy** tracks least-recently-used entry per set   
-- **2-bit saturating FSM** predicts branch direction  
+- **2-bit dynamic FSM** predicts branch direction  
 - **Forwarding support**: Read path returns updated target immediately when the same PC is updated
 ---
 
@@ -45,7 +45,7 @@ Each BTB entry contains:
 | `valid`    | 1     | Indicates if the entry is valid            |
 | `tag`      | 27    | Upper bits of the branch instruction address |
 | `target`   | 32    | Predicted branch target address            |
-| `fsm prediction` | 2   | 2-bit saturating counter for branch prediction |
+| `fsm prediction` | 2   | 2-bit counter for branch prediction |
 
 Visual representation of BTB Entry:  
 
@@ -55,7 +55,7 @@ Visual representation of BTB Entry:
 
 ### 🔸 2-Bit Branch Predictor FSM
 
-The predictor uses a 2-bit saturating counter with four states:
+The predictor uses a 2-bit counter with four states:
 
 | State | Prediction | Meaning               |
 |-------|-----------|----------------------|
@@ -128,7 +128,7 @@ State Transition Diagram::
 ## 📊 Synthesis and Implementation Results
 
 ### 🔸 Tool Used
-**Xilinx Vivado Design Suite**
+**Xilinx Vivado Design Suite (Target: Artix-7 AC701 FPGA Board)**
 
 ---
 
@@ -148,7 +148,7 @@ State Transition Diagram::
 
 ---
 
-### 🧱 Resource Utilization
+### 🧱 Resource Utilisation
 
 | Resource | Used | Available | Utilization |
 |-----------|-------|------------|--------------|
@@ -176,10 +176,10 @@ A portion of LUTs is used to implement memory blocks for BTB storage.
 
 ## 🧩 Future Improvements
 
-- Add parameterized number of sets and ways  
-- Add more automated tests to check corner cases   
+- Add parameterised number of sets and ways  
+- Add more automated tests to check additional corner cases   
 - Improve synthesis results for lower area, power, or higher speed
-- Explore using BRAM instead of LUT memory for larger BTBs, if memory size grows or LUT usage becomes significant
+- Explore BRAM-based BTB implementation for larger table sizes  
 
 ---
 
