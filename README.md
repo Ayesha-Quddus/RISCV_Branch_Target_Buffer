@@ -144,7 +144,8 @@ State Transition Diagram::
 
 ![Timing Summary](imgs/timing_summary.png)  
 
-✅ **All user-specified timing constraints are met.**
+✅ **All timing constraints successfully met.**  
+The positive WNS indicates the design can potentially operate at a frequency higher than 100 MHz.
 
 ---
 
