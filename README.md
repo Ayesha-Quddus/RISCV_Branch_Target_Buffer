@@ -121,7 +121,7 @@ State Transition Diagram::
 **Description:**
 - Shows BTB lookups, updates, FSM transitions, and LRU activity  
 - FSM resets to state 0 whenever a new entry is inserted
-- valid asserts on BTB hits, and target outputs the predicted branch address  
+- `valid` asserts on BTB hits, and `target` outputs the predicted branch address  
 
 ---
 
