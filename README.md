@@ -151,7 +151,7 @@ The positive WNS indicates the design can potentially operate at a frequency hig
 
 ### 🧱 Resource Utilisation
 
-| Resource | Used | Available | Utilization |
+| Resource | Used | Available | Utilisation |
 |-----------|-------|------------|--------------|
 | **Slice LUTs** | 334 | 134,600 | 0.25% |
 | **Slice Registers** | 8 | 269,200 | <0.01% |
